@@ -56,7 +56,7 @@
 
 - 这是**临时容器**,闲置会被回收。**没 commit 的东西会丢失**,所以每节结束都要提交。
 - 容器默认**没装 NumPy / Matplotlib**。需要实际跑 notebook 时,先安装:
-  `pip install numpy matplotlib pandas scikit-learn`(可经代理安装)。
+  `pip install -r requirements.txt`(可经代理安装)。
 - 开发分支:`claude/linear-algebra-python-learning-4mtmla`。
 
 ## 章节地图(⭐ = 机器学习最常用)

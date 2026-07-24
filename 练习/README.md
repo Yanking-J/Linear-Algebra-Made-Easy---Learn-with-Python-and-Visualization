@@ -10,10 +10,10 @@
 
 ## 跑代码前
 
-容器默认没装科学计算库,先安装一次:
+默认没装科学计算库,先安装一次(在项目根目录):
 
 ```bash
-pip install numpy matplotlib pandas scikit-learn
+pip install -r requirements.txt
 ```
 
 第一份练习会在开始学 `LA_01_01 什么是向量` 时建好。
