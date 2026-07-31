@@ -1,0 +1,675 @@
+<title>1.2 坐标系 — 线性代数讲义</title>
+
+<style>
+  :root {
+    --ground:      #F2F5F7;
+    --panel:       #FFFFFF;
+    --grid:        #E1E8EE;
+    --rule:        #D4DDE5;
+    --ink:         #171D26;
+    --ink-soft:    #4A5563;
+    --ink-faint:   #78848F;
+    --ax1:         #C9342F;
+    --ax2:         #17864A;
+    --ax3:         #2A62B8;
+    --accent:      #2A62B8;
+    --note-bg:     #E7EEF6;
+    --warn-bg:     #FBEFE6;
+    --warn-edge:   #D98A45;
+    --code-bg:     #EDF1F5;
+
+    --serif-cjk: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "SimSun", "STSong", serif;
+    --sans-cjk:  "Source Han Sans SC", "Noto Sans CJK SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --math:      "Latin Modern Math", "Cambria Math", "STIX Two Math", "Times New Roman", Georgia, serif;
+    --mono:      ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:    #0F141A;
+      --panel:     #161D25;
+      --grid:      #1B232C;
+      --rule:      #2A343F;
+      --ink:       #E4E9EF;
+      --ink-soft:  #A6B1BF;
+      --ink-faint: #75818F;
+      --ax1:       #F2726C;
+      --ax2:       #4FC98A;
+      --ax3:       #6FA8F5;
+      --accent:    #6FA8F5;
+      --note-bg:   #16212E;
+      --warn-bg:   #2A2117;
+      --warn-edge: #C08040;
+      --code-bg:   #1C242E;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:    #0F141A;
+    --panel:     #161D25;
+    --grid:      #1B232C;
+    --rule:      #2A343F;
+    --ink:       #E4E9EF;
+    --ink-soft:  #A6B1BF;
+    --ink-faint: #75818F;
+    --ax1:       #F2726C;
+    --ax2:       #4FC98A;
+    --ax3:       #6FA8F5;
+    --accent:    #6FA8F5;
+    --note-bg:   #16212E;
+    --warn-bg:   #2A2117;
+    --warn-edge: #C08040;
+    --code-bg:   #1C242E;
+  }
+
+  :root[data-theme="light"] {
+    --ground:    #F2F5F7;
+    --panel:     #FFFFFF;
+    --grid:      #E1E8EE;
+    --rule:      #D4DDE5;
+    --ink:       #171D26;
+    --ink-soft:  #4A5563;
+    --ink-faint: #78848F;
+    --ax1:       #C9342F;
+    --ax2:       #17864A;
+    --ax3:       #2A62B8;
+    --accent:    #2A62B8;
+    --note-bg:   #E7EEF6;
+    --warn-bg:   #FBEFE6;
+    --warn-edge: #D98A45;
+    --code-bg:   #EDF1F5;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--ground);
+    background-image:
+      repeating-linear-gradient(to right,  var(--grid) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+    color: var(--ink);
+    font-family: var(--sans-cjk);
+    font-size: 17px;
+    line-height: 1.85;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .sheet {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+  }
+
+  /* ---------- 页眉 ---------- */
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 2.5rem;
+  }
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1rem;
+    align-items: baseline;
+    font-size: .75rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+  }
+  .masthead h1 {
+    font-family: var(--serif-cjk);
+    font-size: clamp(2rem, 6vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .masthead h1 .num {
+    color: var(--accent);
+    font-family: var(--math);
+    font-style: italic;
+    margin-right: .4rem;
+  }
+  .standfirst {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  /* ---------- 进度条 ---------- */
+  .progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    padding: 1rem 1.15rem;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    margin-bottom: 2.5rem;
+    align-items: center;
+  }
+  .progress .plabel {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    width: 100%;
+  }
+  .chip {
+    font-size: .85rem;
+    padding: .2rem .7rem;
+    border-radius: 100px;
+    border: 1px solid var(--rule);
+    color: var(--ink-faint);
+  }
+  .chip.done {
+    border-color: var(--accent);
+    color: var(--panel);
+    background: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ---------- 小点 ---------- */
+  .point {
+    margin: 0 0 3.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--rule);
+  }
+  .point-head {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 1.25rem;
+  }
+  .point-num {
+    flex: none;
+    font-family: var(--math);
+    font-style: italic;
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--accent);
+    min-width: 2.2rem;
+  }
+  .point h2 {
+    font-family: var(--serif-cjk);
+    font-size: clamp(1.35rem, 3.5vw, 1.7rem);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .point h3 {
+    font-family: var(--serif-cjk);
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin: 2.25rem 0 .75rem;
+    line-height: 1.5;
+  }
+  p { margin: 0 0 1.1rem; }
+  .point > p, .point > ul, .point > ol { max-width: 66ch; }
+
+  ul, ol { padding-left: 1.4rem; margin: 0 0 1.1rem; }
+  li { margin-bottom: .5rem; }
+
+  strong { font-weight: 700; }
+  em { font-style: normal; color: var(--accent); font-weight: 600; }
+
+  /* ---------- 数学 ---------- */
+  .v {
+    font-family: var(--math);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.06em;
+  }
+  .sc {
+    font-family: var(--math);
+    font-style: italic;
+    font-size: 1.06em;
+  }
+  .op { font-family: var(--math); padding: 0 .18em; }
+
+  .formula {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .35em;
+    flex-wrap: wrap;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+    padding: 1.35rem 1rem;
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+    overflow-x: auto;
+  }
+
+  .mat {
+    display: inline-grid;
+    position: relative;
+    padding: .4em .75em;
+    gap: .15em .8em;
+    justify-items: center;
+    font-family: var(--math);
+    font-style: italic;
+    vertical-align: middle;
+  }
+  .mat::before, .mat::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: .3em;
+    border: 2px solid currentColor;
+  }
+  .mat::before { left: 0;  border-right: none; }
+  .mat::after  { right: 0; border-left: none; }
+
+  /* ---------- 表格 ---------- */
+  .tw { overflow-x: auto; margin: 1.5rem 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 30rem;
+    background: var(--panel);
+    font-size: .95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 2px solid var(--ink);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  code {
+    font-family: var(--mono);
+    font-size: .87em;
+    background: var(--code-bg);
+    padding: .12em .4em;
+    border-radius: 2px;
+  }
+
+  /* ---------- 提示框 ---------- */
+  .note, .warn {
+    padding: 1.1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 2px;
+    font-size: .96rem;
+  }
+  .note p:last-child, .warn p:last-child { margin-bottom: 0; }
+  .note { background: var(--note-bg); border-left: 3px solid var(--accent); }
+  .warn { background: var(--warn-bg); border-left: 3px solid var(--warn-edge); }
+  .tag {
+    display: block;
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: .4rem;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- 图 ---------- */
+  figure {
+    margin: 1.75rem 0;
+    padding: 1.25rem;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow-x: auto;
+  }
+  figure svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+  figcaption {
+    margin-top: .9rem;
+    font-size: .84rem;
+    color: var(--ink-faint);
+    text-align: center;
+    font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+  .faint { color: var(--ink-faint); }
+  .ax1 { color: var(--ax1); }
+  .ax2 { color: var(--ax2); }
+  .ax3 { color: var(--ax3); }
+  .swatch {
+    display: inline-block;
+    width: .65em; height: .65em;
+    border-radius: 2px;
+    margin-right: .35em;
+    vertical-align: baseline;
+    background: currentColor;
+  }
+
+  /* ---------- 页脚 ---------- */
+  .colophon {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--ink);
+    font-size: .85rem;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 2rem;
+    font-family: var(--mono);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>《线性代数》 鸢尾花书</span>
+      <span>第 1 章 · 向量</span>
+      <span>LA_01_02</span>
+    </div>
+    <h1><span class="num">1.2</span>坐标系</h1>
+    <p class="standfirst">向量是一列数。坐标系，就是把这列数变成看得见的箭头的那座桥。</p>
+  </header>
+
+  <div class="progress">
+    <span class="plabel">本节进度</span>
+    <span class="chip done">① 实数数轴</span>
+    <span class="chip done">② 平面直角坐标系</span>
+    <span class="chip">③ meshgrid 网格</span>
+    <span class="chip">④ 单位向量与分解</span>
+    <span class="chip">⑤ 三维坐标系</span>
+    <span class="chip">⑥ 向量长度</span>
+  </div>
+
+  <!-- ============ 小点 ① ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9312;</span>
+      <h2>实数数轴</h2>
+    </div>
+
+    <p>画一条直线，向左右无限延伸——这就是<strong>实数数轴</strong>（real line）。向左趋向负无穷 <span class="sc">&minus;&infin;</span>，向右趋向正无穷 <span class="sc">+&infin;</span>。</p>
+
+    <figure>
+      <svg viewBox="0 0 600 96" role="img" aria-label="实数数轴，标注 -3 到 3，原点在中间">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g color="var(--ink)">
+          <line x1="40" y1="52" x2="560" y2="52" stroke="currentColor" stroke-width="2"
+                marker-end="url(#ah)" marker-start="url(#ah)"/>
+          <g stroke="currentColor" stroke-width="2">
+            <line x1="90"  y1="45" x2="90"  y2="59"/>
+            <line x1="160" y1="45" x2="160" y2="59"/>
+            <line x1="230" y1="45" x2="230" y2="59"/>
+            <line x1="370" y1="45" x2="370" y2="59"/>
+            <line x1="440" y1="45" x2="440" y2="59"/>
+            <line x1="510" y1="45" x2="510" y2="59"/>
+          </g>
+          <circle cx="300" cy="52" r="5.5" fill="var(--accent)"/>
+          <g font-family="var(--math)" font-style="italic" font-size="16" fill="currentColor" text-anchor="middle">
+            <text x="90"  y="80">&minus;3</text>
+            <text x="160" y="80">&minus;2</text>
+            <text x="230" y="80">&minus;1</text>
+            <text x="300" y="82" fill="var(--accent)" font-weight="700">0</text>
+            <text x="370" y="80">1</text>
+            <text x="440" y="80">2</text>
+            <text x="510" y="80">3</text>
+          </g>
+          <text x="300" y="26" font-size="12" fill="var(--accent)" text-anchor="middle"
+                font-family="var(--mono)" letter-spacing="1.5">ORIGIN</text>
+        </g>
+      </svg>
+      <figcaption>图 1 · 实数数轴：原点、正方向、单位长度</figcaption>
+    </figure>
+
+    <p>别看它简单，它必须同时具备<strong>三个要素</strong>，缺一个就没法用：</p>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>要素</th><th>是什么</th><th>拿掉它会怎样</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>原点</strong></td><td><span class="sc">0</span> 在哪</td><td>不知道从哪儿开始数</td></tr>
+          <tr><td><strong>正方向</strong></td><td>箭头朝哪</td><td>不知道哪边是正、哪边是负</td></tr>
+          <tr><td><strong>单位长度</strong></td><td><span class="sc">1</span> 有多长</td><td>知道方向，但不知道「走了多远」</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>打个比方：这就像看一把尺子。<strong>原点</strong>是刻度 0 的位置，<strong>正方向</strong>是刻度增大的方向，<strong>单位长度</strong>是一厘米有多宽。三者齐了，尺子才能量东西。</p>
+
+    <p>数轴还有个正式名字：<strong>一维欧几里得空间</strong>，记作 <span class="sc">&#8477;</span>，也就是全体实数的集合。</p>
+
+    <div class="note">
+      <span class="tag">为什么要强调三要素</span>
+      <p>因为二维、三维坐标系不过是<strong>把这套三要素在每根轴上各配一份</strong>。等会儿讲平面坐标系时你会看到，它就是两条数轴垂直一交叉，没有任何新东西。先把一维吃透，后面全是复用。</p>
+    </div>
+  </section>
+
+  <!-- ============ 小点 ② ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9313;</span>
+      <h2>平面直角坐标系</h2>
+    </div>
+
+    <p>两条数轴在原点垂直一交叉，就是<strong>平面直角坐标系</strong>，也叫<strong>二维欧几里得空间</strong> <span class="sc">&#8477;<sup>2</sup></span>。每根轴各自带一套「原点 / 正方向 / 单位长度」，没有新东西。</p>
+
+    <div class="note">
+      <span class="tag">笛卡尔与苍蝇</span>
+      <p>17 世纪笛卡尔（René Descartes）躺床上盯着天花板上的苍蝇，想到可以用两条垂直数轴锁定苍蝇的位置。这一念之间，<strong>几何问题变成了解方程</strong>——解析几何就此诞生。所以它也叫「笛卡尔坐标系」。</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 420 300" role="img" aria-label="平面直角坐标系，x1 轴为红色，x2 轴为绿色，示例向量指向 (2,3)">
+        <defs>
+          <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink-soft)"/>
+          </marker>
+          <marker id="a1" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax1)"/>
+          </marker>
+          <marker id="a2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax2)"/>
+          </marker>
+          <marker id="a3" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <g stroke="var(--grid)" stroke-width="1">
+          <line x1="120" y1="30" x2="120" y2="255"/>
+          <line x1="180" y1="30" x2="180" y2="255"/>
+          <line x1="240" y1="30" x2="240" y2="255"/>
+          <line x1="300" y1="30" x2="300" y2="255"/>
+          <line x1="65"  y1="200" x2="360" y2="200"/>
+          <line x1="65"  y1="140" x2="360" y2="140"/>
+          <line x1="65"  y1="80"  x2="360" y2="80"/>
+        </g>
+
+        <line x1="60" y1="260" x2="370" y2="260" stroke="var(--ax1)" stroke-width="2.5" marker-end="url(#a1)"/>
+        <line x1="60" y1="260" x2="60"  y2="30"  stroke="var(--ax2)" stroke-width="2.5" marker-end="url(#a2)"/>
+
+        <g stroke="var(--ink-faint)" stroke-width="1.5" stroke-dasharray="4 4">
+          <line x1="180" y1="80" x2="180" y2="260"/>
+          <line x1="180" y1="80" x2="60"  y2="80"/>
+        </g>
+
+        <line x1="60" y1="260" x2="180" y2="80" stroke="var(--accent)" stroke-width="3" marker-end="url(#a3)"/>
+        <circle cx="60" cy="260" r="4.5" fill="var(--ink)"/>
+
+        <g font-family="var(--math)" font-style="italic" font-size="16">
+          <text x="382" y="266" fill="var(--ax1)">x</text>
+          <text x="392" y="270" fill="var(--ax1)" font-size="11">1</text>
+          <text x="52"  y="22"  fill="var(--ax2)">x</text>
+          <text x="62"  y="26"  fill="var(--ax2)" font-size="11">2</text>
+          <text x="196" y="70"  fill="var(--accent)" font-weight="700">(2, 3)</text>
+          <text x="30"  y="278" fill="var(--ink-faint)" font-size="13">0</text>
+          <text x="176" y="278" fill="var(--ink-faint)" font-size="13">2</text>
+          <text x="44"  y="86"  fill="var(--ink-faint)" font-size="13">3</text>
+        </g>
+
+        <path d="M 108 236 A 62 62 0 0 0 84 212" fill="none" stroke="var(--ink-soft)"
+              stroke-width="1.8" marker-end="url(#ar)"/>
+        <text x="112" y="212" font-size="11" fill="var(--ink-soft)"
+              font-family="var(--mono)">逆时针 +</text>
+      </svg>
+      <figcaption>图 2 · 平面直角坐标系与向量 [2, 3]ᵀ</figcaption>
+    </figure>
+
+    <p>高中的部分到此为止。下面三条是<strong>本书的约定</strong>，值得停一下。</p>
+
+    <h3>约定一：向量的起点，默认在原点</h3>
+
+    <p>列向量画成箭头：<strong>起点 (0, 0)，终点 (<span class="sc">x</span><sub class="sc">1</sub>, <span class="sc">x</span><sub class="sc">2</sub>)</strong>。</p>
+
+    <div class="formula">
+      <span class="v">x</span>
+      <span class="op">=</span>
+      <span class="mat">
+        <span>x<sub>1</sub></span>
+        <span>x<sub>2</sub></span>
+      </span>
+    </div>
+
+    <p>这条约定的意义在于——<strong>坐标值就唯一确定了一个向量</strong>，不用再交代「它在哪」。零向量 <span class="v">0</span> 就趴在原点。</p>
+
+    <p>但注意「<em>默认</em>」二字：向量是<strong>可以平移</strong>的。下一节讲向量加法时，就要把一个箭头的尾巴挪到另一个箭头的头上，摆成「首尾相接」。那时候起点就不在原点了。</p>
+
+    <h3>约定二：两种画法 —— 箭头 vs 散点</h3>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>画法</th><th>什么时候用</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>箭头</strong>（arrow / quiver）</td><td>向量少，关心起点终点的具体位置</td></tr>
+          <tr><td><strong>散点</strong>（scatter）</td><td>向量多，只关心分布和趋势</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>散点图里，每个点就是一个向量的<strong>终点</strong>（起点默认在原点，省略不画）。</p>
+
+    <div class="note">
+      <span class="tag">这在机器学习里对应什么</span>
+      <p>你以后见到的每一张「数据散点图」，本质上都是<strong>一堆向量的终点</strong>。一个数据样本 = 一个向量 = 图上一个点。这个翻译关系记住，第 12 章讲 PCA 时会直接用上。</p>
+    </div>
+
+    <h3>约定三：逆时针为正</h3>
+
+    <p>从 <span class="sc">x</span><sub class="sc">1</sub> 轴正方向<strong>逆时针</strong>转 90°，到 <span class="sc">x</span><sub class="sc">2</sub> 轴正方向——规定这个方向为<strong>正</strong>。</p>
+
+    <div class="warn">
+      <span class="tag">这条最重要</span>
+      <p>听起来像废话，但它是个<strong>约定</strong>，不是定理。而且后面一大串东西的<strong>正负号</strong>全挂在它身上：行列式的正负、叉积的方向、旋转角的符号。约定一反，这些结论全部变号。三维里它会升级成<strong>右手定则</strong>。</p>
+    </div>
+
+    <p>
+      <span class="ax1"><span class="swatch"></span></span>教材把 <span class="sc">x</span><sub class="sc">1</sub> 轴画成红色、<span class="ax2"><span class="swatch"></span></span><span class="sc">x</span><sub class="sc">2</sub> 轴画成绿色，不是随便挑的。后面要用 <strong>RGB 颜色</strong>来讲二维向量——红绿平面上的点，就是红光绿光按不同比例混出的颜色。
+    </p>
+  </section>
+
+  <!-- ============ 符号速查 ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&sect;</span>
+      <h2>符号速查表</h2>
+    </div>
+
+    <p>数学公式的标准写法叫 <strong>LaTeX</strong>（读作「拉泰赫」），是论文和教科书的通用排版语言。它<em>既不是 Python 代码，也不是字体设置</em>——而是「这段是公式」的标记。下面是本节用到的对照，看到原始码时可以回来查。</p>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>LaTeX 写法</th><th>渲染结果</th><th>怎么读</th><th>意思</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>$ ... $</code></td>
+            <td><span class="faint">（界定符）</span></td>
+            <td>——</td>
+            <td>「这中间是公式」</td>
+          </tr>
+          <tr>
+            <td><code>\boldsymbol{x}</code></td>
+            <td><span class="v">x</span></td>
+            <td>向量 x</td>
+            <td>粗斜体 = <strong>向量</strong></td>
+          </tr>
+          <tr>
+            <td><code>x_1</code></td>
+            <td><span class="sc">x</span><sub class="sc">1</sub></td>
+            <td>x 下标 1</td>
+            <td>第 1 个<strong>分量</strong></td>
+          </tr>
+          <tr>
+            <td><code>x^2</code></td>
+            <td><span class="sc">x</span><sup class="sc">2</sup></td>
+            <td>x 的平方</td>
+            <td>上标 / 幂次</td>
+          </tr>
+          <tr>
+            <td><code>\begin{bmatrix} ... \end{bmatrix}</code></td>
+            <td>
+              <span class="mat" style="font-size:.9em">
+                <span>x<sub>1</sub></span>
+                <span>x<sub>2</sub></span>
+              </span>
+            </td>
+            <td>方括号矩阵</td>
+            <td>画一个<strong>矩阵 / 列向量</strong></td>
+          </tr>
+          <tr>
+            <td><code>\\</code></td>
+            <td><span class="faint">（换行）</span></td>
+            <td>——</td>
+            <td>矩阵里<strong>换到下一行</strong></td>
+          </tr>
+          <tr>
+            <td><code>\mathbb{R}^2</code></td>
+            <td><span class="sc">&#8477;<sup>2</sup></span></td>
+            <td>R 二</td>
+            <td>二维欧几里得空间</td>
+          </tr>
+          <tr>
+            <td><code>\|\boldsymbol{x}\|</code></td>
+            <td><span class="op">&#8214;</span><span class="v">x</span><span class="op">&#8214;</span></td>
+            <td>x 的范数</td>
+            <td>向量的<strong>长度</strong>（小点 ⑥ 讲）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <span class="tag">纯文本写法</span>
+      <p>在不能渲染公式的地方（比如聊天窗口），同样的意思可以直接写成 <code>x = [x₁, x₂]ᵀ</code>。右上角那个 <code>ᵀ</code> 是<strong>转置</strong>——把横着写的一行数立起来变成一列，这样列向量就能写在一行里了。</p>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span>《线性代数》 鸢尾花书 · 姜伟生</span>
+    <span>讲义 LA_01_02</span>
+    <span>小点 ①&ndash;② · 待续</span>
+  </footer>
+
+</div>
