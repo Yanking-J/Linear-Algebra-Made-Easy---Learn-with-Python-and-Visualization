@@ -1,23 +1,29 @@
-# 鸢尾花书《矩阵力量》—— 运行 notebook 所需的 Python 库
-# 安装(建议先激活虚拟环境):
+# Iris Series "Linear Algebra" - Python dependencies
+#
 #     pip install -r requirements.txt
-# 适用 Python 3.9+(已在 3.11 验证思路);版本不锁定,装最新即可。
+#
+# IMPORTANT: keep this file ASCII-only. pip decodes it with the system
+# locale encoding (GBK on Chinese Windows), so non-ASCII comments raise
+# UnicodeDecodeError before installation even starts.
+# Chinese notes for each package live in the setup guide (kaike zhunbei).
+#
+# Python 3.9+ (verified on 3.11). Versions unpinned - latest is fine.
 
-# --- 核心:几乎每一节都用 ---
-numpy          # 数组与矩阵运算,线性代数的主力
-matplotlib     # 画图、可视化
+# --- core: used in almost every section ---
+numpy
+matplotlib
 
-# --- 常用 ---
-seaborn        # 基于 matplotlib 的美化绘图
-pandas         # 表格数据处理(配合 X_df.pkl 等数据文件)
-scikit-learn   # 机器学习:回归、PCA 等(import 名为 sklearn)
-networkx       # 图论,第 15 章:无向图 / 有向图 / 拉普拉斯矩阵
+# --- common ---
+seaborn
+pandas
+scikit-learn
+networkx
 
-# --- 偶尔用到 ---
-sympy          # 符号计算,用于手算推导
-scipy          # 科学计算工具箱
-statsmodels    # 统计建模,回归章节
+# --- occasional ---
+sympy
+scipy
+statsmodels
 
-# --- 运行 .ipynb 必需 ---
-jupyter        # Jupyter 内核与界面
-ipykernel      # VSCode 里运行 notebook 所需的内核
+# --- required to open and run the .ipynb files ---
+jupyter
+ipykernel
