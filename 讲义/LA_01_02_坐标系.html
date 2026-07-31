@@ -303,6 +303,38 @@
     border-radius: 2px;
   }
 
+  /* ---------- 代码块 ---------- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1rem 1.15rem;
+    margin: 1.25rem 0;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: .87rem;
+    line-height: 1.7;
+    tab-size: 4;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+  pre.out {
+    background: var(--panel);
+    border-left: 3px solid var(--ink-faint);
+    color: var(--ink-soft);
+  }
+  .cap {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 1.5rem 0 -.75rem;
+  }
+
   /* ---------- 提示框 ---------- */
   .note, .warn {
     padding: 1.1rem 1.25rem;
@@ -388,7 +420,7 @@
     <span class="plabel">本节进度</span>
     <span class="chip done">① 实数数轴</span>
     <span class="chip done">② 平面直角坐标系</span>
-    <span class="chip">③ meshgrid 网格</span>
+    <span class="chip done">③ meshgrid 网格</span>
     <span class="chip">④ 单位向量与分解</span>
     <span class="chip">⑤ 三维坐标系</span>
     <span class="chip">⑥ 向量长度</span>
@@ -588,6 +620,170 @@
     </p>
   </section>
 
+  <!-- ============ 小点 ③ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9314;</span>
+      <h2><code style="font-size:.72em">numpy.meshgrid()</code> 创建网格数据</h2>
+    </div>
+
+    <p>前面都是数学约定，这一小点开始上真代码。</p>
+
+    <h3>先说动机：为什么需要「网格」</h3>
+
+    <p>坐标系画出来是一张网格纸。计算机要在上面画图，就得知道<strong>每一个格点的坐标是多少</strong>。</p>
+
+    <p>问题来了——一个 3&times;3 的网格有 9 个点，每个点有 2 个坐标值。这 18 个数，怎么存？</p>
+
+    <p>NumPy 的答案有点反直觉：<strong>不用一个表存 9 个坐标对，而是用两个表——一个专存所有点的 <span class="sc">x</span><sub class="sc">1</sub>，另一个专存所有点的 <span class="sc">x</span><sub class="sc">2</sub>。</strong></p>
+
+    <h3>第一步：<code>np.arange()</code> 造一维数组</h3>
+
+    <p>上一节用 <code>np.array([1, 2, 3])</code> 手写数组。但要造 <code>-4</code> 到 <code>4</code> 这种连续整数，一个个敲太蠢。<code>np.arange()</code> 自动生成：</p>
+
+    <pre><code>np.arange(start, stop, step)</code></pre>
+
+    <p>意思是「从 <code>start</code> 开始，每次加 <code>step</code>，一直到 <code>stop</code>」。真实输出：</p>
+
+    <pre class="out"><code>np.arange(-1, 2, 1)  -&gt;  [-1  0  1]
+np.arange(0, 5, 1)   -&gt;  [0 1 2 3 4]
+np.arange(0, 4, 1)   -&gt;  [0 1 2 3]</code></pre>
+
+    <div class="warn">
+      <span class="tag">含头不含尾</span>
+      <p>看第二、三行：写 <code>5</code> 才能取到 <code>4</code>，写 <code>4</code> 只到 <code>3</code>。<strong><code>stop</code> 本身永远不包含在结果里。</strong></p>
+      <p>这跟<strong>切片</strong> <code>a[0:3]</code> 是同一个规矩：Python 里凡是「从…到…」，一律含头不含尾。记住这一条，能省掉将来无数次 off-by-one 的 debug。</p>
+    </div>
+
+    <h3>第二步：<code>np.meshgrid()</code> 造网格</h3>
+
+    <pre><code>x1 = np.arange(-1, 2, 1)      # [-1  0  1]
+x2 = np.arange(-1, 2, 1)      # [-1  0  1]
+
+xx1, xx2 = np.meshgrid(x1, x2)</code></pre>
+
+    <p>先看<strong>等号左边这个新语法</strong>：<code>np.meshgrid()</code> <strong>一次返回两个数组</strong>，等号左边就用逗号分开两个变量去接。这叫<strong>解包</strong>（unpacking），Python 里很常见。接错个数会直接报错。</p>
+
+    <p><strong>输入是两个一维数组，输出是两个二维数组</strong>——维度升上去了：</p>
+
+    <pre class="out"><code>x1  = [-1  0  1]        shape = (3,)     ndim = 1
+                          ↓  meshgrid
+xx1 = [[-1  0  1]       shape = (3, 3)   ndim = 2
+       [-1  0  1]
+       [-1  0  1]]
+
+xx2 = [[-1 -1 -1]       shape = (3, 3)   ndim = 2
+       [ 0  0  0]
+       [ 1  1  1]]</code></pre>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>数组</th><th>存什么</th><th>怎么来的</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>xx1</code></td><td>所有格点的 <strong><span class="sc">x</span><sub class="sc">1</sub> 坐标</strong></td><td>把 <code>x1</code> <strong>横着放，一行行往下复制</strong></td></tr>
+          <tr><td><code>xx2</code></td><td>所有格点的 <strong><span class="sc">x</span><sub class="sc">2</sub> 坐标</strong></td><td>把 <code>x2</code> <strong>竖着放，一列列往右复制</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>怎么读这两个表</h3>
+
+    <p><strong>要定位一个格点，必须同时查两个数组的同一位置。</strong></p>
+
+    <pre class="out"><code>xx1[0][2] = 1      xx2[0][2] = -1     →  第0行第2列，坐标 (1, -1)
+xx1[1][1] = 0      xx2[1][1] =  0     →  第1行第1列，坐标 (0, 0)  ← 原点
+xx1[2][0] = -1     xx2[2][0] =  1     →  第2行第0列，坐标 (-1, 1)</code></pre>
+
+    <p>一个格点的完整坐标 = <code>(xx1[行][列], xx2[行][列])</code>。<strong>两个表，同一个位置，配成一对。</strong></p>
+
+    <div class="note">
+      <span class="tag">为什么非要拆成两个表</span>
+      <p>因为这样能<strong>整体运算</strong>。比如想算网格上每个点到原点距离的平方，直接写 <code>xx1**2 + xx2**2</code> 就行——一行代码算完 9 个点，不用写循环。这叫<strong>向量化</strong>，是 NumPy 快的根本原因。</p>
+    </div>
+
+    <h3>坑一：shape 的顺序是反的</h3>
+
+    <p>换一组<strong>长度不同</strong>的输入：</p>
+
+    <pre><code>x1 = np.arange(0, 3, 1)      # [0 1 2]   3 个数
+x2 = np.arange(0, 2, 1)      # [0 1]     2 个数
+
+xx1, xx2 = np.meshgrid(x1, x2)</code></pre>
+
+    <pre class="out"><code>xx1 = [[0 1 2]
+       [0 1 2]]      shape = (2, 3)   ← 不是 (3, 2)</code></pre>
+
+    <p>「把 x1 横着放」——x1 有 3 个数，<strong>一行就有 3 个格子，这是 3 列，不是 3 行</strong>。往下复制几次由 x2 决定：x2 有 2 个数，复制成 2 行。</p>
+
+    <div class="warn">
+      <span class="tag">一句话记住</span>
+      <p><strong>x1 管水平方向 → 决定「列数」；x2 管竖直方向 → 决定「行数」。</strong>而 <code>shape</code> 写成 <code>(行数, 列数)</code>，于是顺序就反过来了：</p>
+      <pre style="margin-bottom:0"><code>np.meshgrid(x1, x2)  →  shape = (len(x2), len(x1))
+                                    ↑          ↑
+                                  行数        列数</code></pre>
+    </div>
+
+    <p class="cap">同一个网格，两种说法</p>
+    <pre class="out"><code>        x1=0    x1=1    x1=2
+       ┌──────┬──────┬──────┐
+x2=0   │(0,0) │(1,0) │(2,0) │   ← 第 0 行
+       ├──────┼──────┼──────┤
+x2=1   │(0,1) │(1,1) │(2,1) │   ← 第 1 行
+       └──────┴──────┴──────┘</code></pre>
+
+    <p>几何上你会说「<strong>3 宽 2 高</strong>」，数组的 <code>shape</code> 说的是「<strong>2 行 3 列</strong>」。顺序正好相反。方阵（3&times;3）看不出问题，<strong>只有长宽不等时这个坑才会露出来</strong>。</p>
+
+    <p>另外，<strong>两个输出数组永远一样大</strong>——必须一样大，不然没法「同一个位置配成一对」。</p>
+
+    <h3>坑二：<code>xx2</code> 上下是反的</h3>
+
+    <p>用教材的写法，<code>x2</code> 从小到大排：</p>
+
+    <pre><code>x2 = np.arange(-2, 3, 1)      # [-2 -1  0  1  2]   从小到大</code></pre>
+
+    <pre class="out"><code>xx2 = [[-2 -2 -2 -2 -2]     ← 第 0 行：负数
+       [-1 -1 -1 -1 -1]
+       [ 0  0  0  0  0]
+       [ 1  1  1  1  1]
+       [ 2  2  2  2  2]]    ← 第 4 行：正数</code></pre>
+
+    <p><strong>负数在上面，正数在下面</strong>——跟画数学图的直觉正好相反。因为这里有<strong>两套「向下」</strong>在打架：</p>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th></th><th>方向</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>数组的行索引</strong></td><td>第 0 行在最上面，序号往下<strong>递增</strong></td></tr>
+          <tr><td><strong>数学的 <span class="sc">x</span><sub class="sc">2</sub> 轴</strong></td><td>数值往上<strong>递增</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>数组的「下」= 行号变大；数学的「上」= 数值变大。两者是反的。</strong></p>
+
+    <div class="note">
+      <span class="tag">实际会不会出错</span>
+      <p>大多数时候不会——<code>plt.contour()</code>、<code>plt.scatter()</code> 接收的是<strong>坐标值</strong>（数组里存的数），不是行号，它们会自己把 <code>-2</code> 画在下面。</p>
+      <p>但当你<strong>直接把数组当图像看</strong>时就会翻车——<code>plt.imshow()</code> 按行号从上往下贴像素，图会上下颠倒。真遇到了，加一句 <code>origin='lower'</code> 就正过来。</p>
+      <p>现在不用记这些函数名，<strong>只要记住「数组的行序 &ne; 数学的纵轴方向」这件事存在</strong>就够了。将来图画反了，你会想起这儿。</p>
+    </div>
+
+    <div class="note">
+      <span class="tag">小点 ③ 收获</span>
+      <ol style="margin-bottom:0">
+        <li><code>np.arange(start, stop, step)</code> —— <strong>含头不含尾</strong></li>
+        <li><code>xx1, xx2 = np.meshgrid(x1, x2)</code> —— 两个一维 → 两个二维；<strong>解包</strong>语法；<code>shape = (len(x2), len(x1))</code>，<strong>顺序反的</strong></li>
+        <li><code>xx2</code> 的<strong>行序与数学纵轴方向相反</strong></li>
+      </ol>
+    </div>
+
+    <p style="color:var(--ink-faint);font-size:.9rem">对应教材代码：<code>LA_01_02_01.ipynb</code>（9&times;9 大网格，原理相同）、<code>LA_01_02_02.ipynb</code>（三维网格）</p>
+  </section>
+
   <!-- ============ 符号速查 ============ -->
   <section class="point">
     <div class="point-head">
@@ -669,7 +865,7 @@
   <footer class="colophon">
     <span>《线性代数》 鸢尾花书 · 姜伟生</span>
     <span>讲义 LA_01_02</span>
-    <span>小点 ①&ndash;② · 待续</span>
+    <span>小点 ①&ndash;③ · 待续</span>
   </footer>
 
 </div>
