@@ -421,9 +421,9 @@
     <span class="chip done">① 实数数轴</span>
     <span class="chip done">② 平面直角坐标系</span>
     <span class="chip done">③ meshgrid 网格</span>
-    <span class="chip">④ 单位向量与分解</span>
-    <span class="chip">⑤ 三维坐标系</span>
-    <span class="chip">⑥ 向量长度</span>
+    <span class="chip done">④ 单位向量与分解</span>
+    <span class="chip done">⑤ 三维坐标系</span>
+    <span class="chip done">⑥ 向量长度</span>
   </div>
 
   <!-- ============ 小点 ① ============ -->
@@ -784,6 +784,231 @@ x2=1   │(0,1) │(1,1) │(2,1) │   ← 第 1 行
     <p style="color:var(--ink-faint);font-size:.9rem">对应教材代码：<code>LA_01_02_01.ipynb</code>（9&times;9 大网格，原理相同）、<code>LA_01_02_02.ipynb</code>（三维网格）</p>
   </section>
 
+  <!-- ============ 小点 ④ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9315;</span>
+      <h2>单位向量与向量分解</h2>
+    </div>
+
+    <p>本节最重要的一小点。前面所有约定都是为它铺路的。</p>
+
+    <h3>两个特殊向量</h3>
+
+    <p>红绿平面上有两个向量特殊到要给专门的记号：</p>
+
+    <div class="formula">
+      <span class="v">e</span><sub class="sc">1</sub>
+      <span class="op">=</span>
+      <span class="mat"><span>1</span><span>0</span></span>
+      <span style="width:2rem"></span>
+      <span class="v">e</span><sub class="sc">2</sub>
+      <span class="op">=</span>
+      <span class="mat"><span>0</span><span>1</span></span>
+    </div>
+
+    <p><span class="ax1"><span class="swatch"></span></span><span class="v">e</span><sub class="sc">1</sub> 指向 <span class="sc">x</span><sub class="sc">1</sub> 轴正方向，代表<strong>纯红色</strong>；<span class="ax2"><span class="swatch"></span></span><span class="v">e</span><sub class="sc">2</sub> 指向 <span class="sc">x</span><sub class="sc">2</sub> 轴正方向，代表<strong>纯绿色</strong>。它俩长度都是 1 ——<strong>长度为 1 的向量叫单位向量</strong>（unit vector）。</p>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>向量</th><th>颜色</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>[0, 0]ᵀ</code> 零向量</td><td>纯黑（没有光）</td></tr>
+          <tr><td><code>[1, 0]ᵀ</code> = <span class="v">e</span><sub class="sc">1</sub></td><td>纯红</td></tr>
+          <tr><td><code>[0, 1]ᵀ</code> = <span class="v">e</span><sub class="sc">2</sub></td><td>纯绿</td></tr>
+          <tr><td><code>[1, 1]ᵀ</code> 全 1 向量</td><td><strong>黄</strong> = 红光 + 绿光</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>最后一行其实已经偷偷用上了<strong>向量加法</strong>：<code>[1,1]ᵀ = [1,0]ᵀ + [0,1]ᵀ</code>。红光加绿光得黄光——这是物理事实，也是数学式子。顺带，<code>[1,1]ᵀ</code> 恰好是<strong>单位正方形的对角线</strong>。</p>
+
+    <h3>核心式子：向量分解</h3>
+
+    <p>平面上<strong>任意</strong>一个向量，都能拆成 <span class="v">e</span><sub class="sc">1</sub> 和 <span class="v">e</span><sub class="sc">2</sub> 的组合：</p>
+
+    <div class="formula">
+      <span class="v">x</span>
+      <span class="op">=</span>
+      <span class="mat"><span>x<sub>1</sub></span><span>x<sub>2</sub></span></span>
+      <span class="op">=</span>
+      <span class="sc">x</span><sub class="sc">1</sub>
+      <span class="mat"><span>1</span><span>0</span></span>
+      <span class="op">+</span>
+      <span class="sc">x</span><sub class="sc">2</sub>
+      <span class="mat"><span>0</span><span>1</span></span>
+      <span class="op">=</span>
+      <span class="sc">x</span><sub class="sc">1</sub><span class="v">e</span><sub class="sc">1</sub>
+      <span class="op">+</span>
+      <span class="sc">x</span><sub class="sc">2</sub><span class="v">e</span><sub class="sc">2</sub>
+    </div>
+
+    <p class="cap">实跑验证</p>
+    <pre class="out"><code>x           = [2 3]
+2*e1        = [2 0]        ← 沿 x₁ 方向走 2 步
+3*e2        = [0 3]        ← 沿 x₂ 方向走 3 步
+2*e1 + 3*e2 = [2 3]        ← 拼回来了 ✓</code></pre>
+
+    <p>几何上就是：<strong>先沿红轴走 2 格，再沿绿轴走 3 格，就到了 x 的终点。</strong>这一个式子里同时藏了三个概念——<strong>向量分解</strong>、<strong>向量加法</strong>、<strong>标量乘法</strong>（<code>2*e1</code> 就是标量乘法）。后两个是 1.3、1.4 节的主题。</p>
+
+    <h3>别把它看成废话</h3>
+
+    <p>学到这儿你多半在想：<em>「把 [2,3] 拆成 2 和 3，这不是废话吗？」</em></p>
+
+    <p>确实，只要盯着 <span class="v">e</span><sub class="sc">1</sub>、<span class="v">e</span><sub class="sc">2</sub> 看，它就是废话。<strong>但换个基底，它立刻就不废话了。</strong></p>
+
+    <p>换一组新的向量当「尺子」——<code>b₁ = [1,1]ᵀ</code>、<code>b₂ = [1,-1]ᵀ</code>，去量<strong>同一个箭头</strong> <code>x = [2,3]ᵀ</code>：</p>
+
+    <pre class="out"><code>x 在新基底下的坐标 = [2.5, -0.5]
+验算：2.5·b₁ + (-0.5)·b₂ = [2, 3]  ✓</code></pre>
+
+    <p><strong>箭头一动没动，坐标却从 <code>(2, 3)</code> 变成了 <code>(2.5, -0.5)</code>。</strong></p>
+
+    <div class="warn">
+      <span class="tag">本节最重要的一句话</span>
+      <p><strong>坐标不是向量自带的属性，而是「拿某组基底去量它」量出来的结果。</strong>换一把尺子，同一个东西就是另一串数字。</p>
+      <p><code>(2, 3)</code> 之所以看起来天经地义，只是因为我们默认用的尺子是 <span class="v">e</span><sub class="sc">1</sub>、<span class="v">e</span><sub class="sc">2</sub>。</p>
+    </div>
+
+    <div class="note">
+      <span class="tag">这在机器学习里对应什么</span>
+      <p>这就是 <strong>PCA 的全部思想</strong>。一份数据在原始坐标系（比如「身高、体重」）下看是一团散点；PCA 干的事情就是<strong>换一组更聪明的基底</strong>，让数据在新坐标下的第一个分量就抓住大部分变化，于是可以扔掉后面的分量——降维。</p>
+      <p>数据没变，<strong>换的只是尺子</strong>。第 12 章会正式讲，内核就在眼前这个式子里。</p>
+    </div>
+
+    <h3>张成（span）</h3>
+
+    <p><span class="v">e</span><sub class="sc">1</sub>、<span class="v">e</span><sub class="sc">2</sub> 交织出方方正正的网格，整个平面就在它俩的支撑下展开。<strong>用这两个向量的所有可能组合，能够到平面上每一个点</strong>——这件事就叫它们<strong>张成</strong>（span）了整个 <span class="sc">&#8477;<sup>2</sup></span>。</p>
+
+    <p>记住「张成」这个词。它是空间的骨架，后面理解向量空间、基底、秩、列空间时会一次次回到它。第 6 章会专门讲。</p>
+
+    <p style="color:var(--ink-faint);font-size:.9rem">📎 严格说 RGB 每个颜色都有三个分量（纯红是 <code>[1,0,0]ᵀ</code>，蓝分量为 0）。写成二维只是为了好理解——几何上，三维压到二维相当于<strong>投影</strong>。另外注意：<strong>能当颜色的只是 <span class="sc">&#8477;<sup>2</sup></span> 里边长为 1 的那个小方块</strong>（RGB 分量范围 [0,1]），向量空间比颜色的世界大得多。</p>
+  </section>
+
+  <!-- ============ 小点 ⑤ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9316;</span>
+      <h2>三维直角坐标系</h2>
+    </div>
+
+    <p>在 <span class="sc">x</span><sub class="sc">1</sub><span class="sc">x</span><sub class="sc">2</sub> 平面的<strong>原点处垂直竖起一条新数轴</strong> <span class="sc">x</span><sub class="sc">3</sub>，让三根轴<strong>两两垂直、原点对齐</strong>——这就是三维直角坐标系 <span class="sc">&#8477;<sup>3</sup></span>。</p>
+
+    <p>分解式照搬，只是多一项：</p>
+
+    <div class="formula">
+      <span class="v">x</span>
+      <span class="op">=</span>
+      <span class="sc">x</span><sub class="sc">1</sub><span class="v">e</span><sub class="sc">1</sub>
+      <span class="op">+</span>
+      <span class="sc">x</span><sub class="sc">2</sub><span class="v">e</span><sub class="sc">2</sub>
+      <span class="op">+</span>
+      <span class="sc">x</span><sub class="sc">3</sub><span class="v">e</span><sub class="sc">3</sub>
+    </div>
+
+    <pre class="out"><code>e1 = [1 0 0]   长度 = 1.0
+e2 = [0 1 0]   长度 = 1.0
+e3 = [0 0 1]   长度 = 1.0
+
+x = [2 3 5] = 2*e1 + 3*e2 + 5*e3 = [2 3 5]  ✓</code></pre>
+
+    <p><strong>颜色终于完整了</strong>：加上 <span class="ax3"><span class="swatch"></span></span><span class="v">e</span><sub class="sc">3</sub>（蓝色），红绿平面才扩展成完整的 RGB 色彩空间。之前那个红绿平面，其实只是 <strong>RGB 正方体的一个侧面</strong>。</p>
+
+    <h3>右手定则</h3>
+
+    <p>二维那条「逆时针为正」，到三维升级成<strong>右手定则</strong>：</p>
+
+    <ul>
+      <li>握紧右手拳头，伸出四指指向 <strong><span class="sc">x</span><sub class="sc">1</sub> 轴正方向</strong>；</li>
+      <li>手心自然朝向 <strong><span class="sc">x</span><sub class="sc">2</sub> 轴正方向</strong>；</li>
+      <li>竖起拇指，指向 <strong><span class="sc">x</span><sub class="sc">3</sub> 轴正方向</strong>。</li>
+    </ul>
+
+    <p>真的伸手比划一下，比看图管用。它跟二维那条约定一脉相承，作用也一样：保证<strong>行列式、坐标变换、叉积、旋转方向</strong>的符号一致。</p>
+
+    <div class="warn">
+      <span class="tag">手性 = 行列式的符号</span>
+      <p>把 <span class="sc">x</span><sub class="sc">3</sub> 轴正方向倒过来，就成了<strong>左手系</strong>。这不是错误的坐标系，只是另一套约定（某些图形学引擎就用左手系）——问题在于<strong>混用会出错</strong>。代数上的差别一算便知：</p>
+      <pre style="margin-bottom:0"><code>右手系三根轴的行列式  =  +1
+左手系三根轴的行列式  =  -1    ← 只是把 x₃ 倒过来，符号就翻了</code></pre>
+    </div>
+
+    <h3>三维 meshgrid</h3>
+
+    <pre><code>xxx1, xxx2, xxx3 = np.meshgrid(x1, x2, x3)   # 三个输入，三个输出</code></pre>
+
+    <p>教材那个 9&times;9&times;9 的例子：</p>
+
+    <pre class="out"><code>A1.shape = (9, 9, 9)    ndim = 3    总格点数 = 729</code></pre>
+
+    <p><strong>维度升到 3 了</strong>——二维时输入一维、输出二维；三维时输入一维、输出三维。那 shape 的顺序呢？用三个<strong>长度全不同</strong>的数组试：</p>
+
+    <pre class="out"><code>len(x1)=3, len(x2)=5, len(x3)=7
+     ↓
+shape = (5, 3, 7)      规律：(len(x2), len(x1), len(x3))</code></pre>
+
+    <p><strong>只有前两个对调，第三个原地不动。</strong>小点 ③ 那个坑在三维里依然存在，而且只影响前两维。这不是什么优雅的设计，纯粹是历史包袱（为兼容图像与矩阵的行列习惯）。<strong>记住有这么回事，用的时候打印一下 <code>.shape</code> 确认</strong>，比硬背可靠。</p>
+
+    <p style="color:var(--ink-faint);font-size:.9rem">对应教材代码：<code>LA_01_02_02.ipynb</code></p>
+  </section>
+
+  <!-- ============ 小点 ⑥ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9317;</span>
+      <h2>向量的长度（L2 范数）</h2>
+    </div>
+
+    <p>本节最后一小点，也是最轻松的一个——<strong>就是勾股定理</strong>。</p>
+
+    <p>向量的长度记作 <span class="op">&#8214;</span><span class="v">x</span><span class="op">&#8214;</span>（两条竖线，读作「x 的范数」）：</p>
+
+    <div class="formula">
+      <span class="op">&#8214;</span><span class="v">x</span><span class="op">&#8214;</span>
+      <span class="op">=</span>
+      <span class="sc" style="font-size:1.3em">&radic;</span><span class="sc" style="border-top:1px solid currentColor;padding:0 .2em">
+        x<sub>1</sub><sup>2</sup> + x<sub>2</sub><sup>2</sup> + &hellip; + x<sub>n</sub><sup>2</sup>
+      </span>
+    </div>
+
+    <p><strong>把每个分量平方、加起来、开根号。</strong>二维情形就是勾股定理：直角边 <span class="sc">x</span><sub class="sc">1</sub>、<span class="sc">x</span><sub class="sc">2</sub>，斜边就是向量长度。三维、n 维照样往后加项，一模一样。</p>
+
+    <p>它的正式名字是<strong>欧几里得范数</strong>，也叫 <strong>L2 范数</strong>。（有 L2 就有 L1、L∞……那是 1.8 节的内容。）</p>
+
+    <h3>代码</h3>
+
+    <pre><code>np.linalg.norm(x)</code></pre>
+
+    <p><code>linalg</code> 是 <strong>lin</strong>ear <strong>alg</strong>ebra（线性代数）的缩写，是 NumPy 专门放线性代数工具的<strong>子模块</strong>。以后求逆、算行列式、特征值分解，都从这里拿。</p>
+
+    <div class="tw">
+      <table>
+        <thead>
+          <tr><th>向量</th><th><code>np.linalg.norm</code></th><th>手算 &radic;(&Sigma;xᵢ²)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>[3, 4]</code></td><td>5.0</td><td>&radic;(9+16) = &radic;25 = <strong>5</strong></td></tr>
+          <tr><td><code>[1, 2, 2]</code></td><td>3.0</td><td>&radic;(1+4+4) = &radic;9 = <strong>3</strong></td></tr>
+          <tr><td><code>[0, 0]</code></td><td>0.0</td><td>0 —— 零向量</td></tr>
+          <tr><td><code>[1, 0]</code></td><td>1.0</td><td>1 —— 单位向量</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>两列完全一致。<strong><code>np.linalg.norm()</code> 没有魔法，它就是在做勾股定理。</strong></p>
+
+    <div class="note">
+      <span class="tag">三条要记住的</span>
+      <pre style="margin-bottom:0"><code>零向量        长度 = 0
+非零向量      长度 &gt; 0
+单位向量      长度 = 1        ← e₁、e₂、e₃ 都在这一类</code></pre>
+    </div>
+
+    <p style="color:var(--ink-faint);font-size:.9rem">📎 <code>[3,4]→5</code> 和 <code>[1,2,2]→3</code> 都算出整数，这类「勾股数」在例题里特别常见——出题人挑的，不是巧合。对应教材代码：<code>LA_01_02_03.ipynb</code></p>
+  </section>
+
   <!-- ============ 符号速查 ============ -->
   <section class="point">
     <div class="point-head">
@@ -865,7 +1090,7 @@ x2=1   │(0,1) │(1,1) │(2,1) │   ← 第 1 行
   <footer class="colophon">
     <span>《线性代数》 鸢尾花书 · 姜伟生</span>
     <span>讲义 LA_01_02</span>
-    <span>小点 ①&ndash;③ · 待续</span>
+    <span>小点 ①&ndash;⑥ · 全节完</span>
   </footer>
 
 </div>
