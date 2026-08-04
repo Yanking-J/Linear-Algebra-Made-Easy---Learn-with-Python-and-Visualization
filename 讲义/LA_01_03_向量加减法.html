@@ -1,0 +1,1070 @@
+<title>1.3 向量加减法 — 线性代数讲义</title>
+
+<style>
+  :root {
+    --ground:      #F2F5F7;
+    --panel:       #FFFFFF;
+    --grid:        #E1E8EE;
+    --rule:        #D4DDE5;
+    --ink:         #171D26;
+    --ink-soft:    #4A5563;
+    --ink-faint:   #78848F;
+    --ax1:         #C9342F;
+    --ax2:         #17864A;
+    --ax3:         #2A62B8;
+    --accent:      #2A62B8;
+    --note-bg:     #E7EEF6;
+    --warn-bg:     #FBEFE6;
+    --warn-edge:   #D98A45;
+    --code-bg:     #EDF1F5;
+
+    --serif-cjk: "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "SimSun", "STSong", serif;
+    --sans-cjk:  "Source Han Sans SC", "Noto Sans CJK SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --math:      "Latin Modern Math", "Cambria Math", "STIX Two Math", "Times New Roman", Georgia, serif;
+    --mono:      ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:    #0F141A;
+      --panel:     #161D25;
+      --grid:      #1B232C;
+      --rule:      #2A343F;
+      --ink:       #E4E9EF;
+      --ink-soft:  #A6B1BF;
+      --ink-faint: #75818F;
+      --ax1:       #F2726C;
+      --ax2:       #4FC98A;
+      --ax3:       #6FA8F5;
+      --accent:    #6FA8F5;
+      --note-bg:   #16212E;
+      --warn-bg:   #2A2117;
+      --warn-edge: #C08040;
+      --code-bg:   #1C242E;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:    #0F141A;
+    --panel:     #161D25;
+    --grid:      #1B232C;
+    --rule:      #2A343F;
+    --ink:       #E4E9EF;
+    --ink-soft:  #A6B1BF;
+    --ink-faint: #75818F;
+    --ax1:       #F2726C;
+    --ax2:       #4FC98A;
+    --ax3:       #6FA8F5;
+    --accent:    #6FA8F5;
+    --note-bg:   #16212E;
+    --warn-bg:   #2A2117;
+    --warn-edge: #C08040;
+    --code-bg:   #1C242E;
+  }
+
+  :root[data-theme="light"] {
+    --ground:    #F2F5F7;
+    --panel:     #FFFFFF;
+    --grid:      #E1E8EE;
+    --rule:      #D4DDE5;
+    --ink:       #171D26;
+    --ink-soft:  #4A5563;
+    --ink-faint: #78848F;
+    --ax1:       #C9342F;
+    --ax2:       #17864A;
+    --ax3:       #2A62B8;
+    --accent:    #2A62B8;
+    --note-bg:   #E7EEF6;
+    --warn-bg:   #FBEFE6;
+    --warn-edge: #D98A45;
+    --code-bg:   #EDF1F5;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--ground);
+    background-image:
+      repeating-linear-gradient(to right,  var(--grid) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 28px);
+    color: var(--ink);
+    font-family: var(--sans-cjk);
+    font-size: 17px;
+    line-height: 1.85;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .sheet {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+  }
+
+  /* ---------- 页眉 ---------- */
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 2.5rem;
+  }
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1rem;
+    align-items: baseline;
+    font-size: .75rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+  }
+  .masthead h1 {
+    font-family: var(--serif-cjk);
+    font-size: clamp(2rem, 6vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .masthead h1 .num {
+    color: var(--accent);
+    font-family: var(--math);
+    font-style: italic;
+    margin-right: .4rem;
+  }
+  .standfirst {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  /* ---------- 进度条 ---------- */
+  .progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    padding: 1rem 1.15rem;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    margin-bottom: 2.5rem;
+    align-items: center;
+  }
+  .progress .plabel {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    width: 100%;
+  }
+  .chip {
+    font-size: .85rem;
+    padding: .2rem .7rem;
+    border-radius: 100px;
+    border: 1px solid var(--rule);
+    color: var(--ink-faint);
+  }
+  .chip.done {
+    border-color: var(--accent);
+    color: var(--panel);
+    background: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ---------- 小点 ---------- */
+  .point {
+    margin: 0 0 3.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--rule);
+  }
+  .point-head {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    margin-bottom: 1.25rem;
+  }
+  .point-num {
+    flex: none;
+    font-family: var(--math);
+    font-style: italic;
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--accent);
+    min-width: 2.2rem;
+  }
+  .point h2 {
+    font-family: var(--serif-cjk);
+    font-size: clamp(1.35rem, 3.5vw, 1.7rem);
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .point h3 {
+    font-family: var(--serif-cjk);
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin: 2.25rem 0 .75rem;
+    line-height: 1.5;
+  }
+  p { margin: 0 0 1.1rem; }
+  .point > p, .point > ul, .point > ol { max-width: 66ch; }
+
+  ul, ol { padding-left: 1.4rem; margin: 0 0 1.1rem; }
+  li { margin-bottom: .5rem; }
+
+  strong { font-weight: 700; }
+  em { font-style: normal; color: var(--accent); font-weight: 600; }
+
+  /* ---------- 数学 ---------- */
+  .v {
+    font-family: var(--math);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.06em;
+  }
+  .sc {
+    font-family: var(--math);
+    font-style: italic;
+    font-size: 1.06em;
+  }
+  .op { font-family: var(--math); padding: 0 .18em; }
+
+  .formula {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .35em;
+    flex-wrap: wrap;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: 2px;
+    padding: 1.35rem 1rem;
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+    overflow-x: auto;
+  }
+
+  .mat {
+    display: inline-grid;
+    position: relative;
+    padding: .4em .75em;
+    gap: .15em .8em;
+    justify-items: center;
+    font-family: var(--math);
+    font-style: italic;
+    vertical-align: middle;
+  }
+  .mat::before, .mat::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: .3em;
+    border: 2px solid currentColor;
+  }
+  .mat::before { left: 0;  border-right: none; }
+  .mat::after  { right: 0; border-left: none; }
+
+  /* ---------- 表格 ---------- */
+  .tw { overflow-x: auto; margin: 1.5rem 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 30rem;
+    background: var(--panel);
+    font-size: .95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: .7rem .9rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 2px solid var(--ink);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  code {
+    font-family: var(--mono);
+    font-size: .87em;
+    background: var(--code-bg);
+    padding: .12em .4em;
+    border-radius: 2px;
+  }
+
+  /* ---------- 代码块 ---------- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1rem 1.15rem;
+    margin: 1.25rem 0;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: .87rem;
+    line-height: 1.7;
+    tab-size: 4;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+  pre.out {
+    background: var(--panel);
+    border-left: 3px solid var(--ink-faint);
+    color: var(--ink-soft);
+  }
+  .cap {
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 1.5rem 0 -.75rem;
+  }
+
+  /* ---------- 提示框 ---------- */
+  .note, .warn {
+    padding: 1.1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 2px;
+    font-size: .96rem;
+  }
+  .note p:last-child, .warn p:last-child { margin-bottom: 0; }
+  .note { background: var(--note-bg); border-left: 3px solid var(--accent); }
+  .warn { background: var(--warn-bg); border-left: 3px solid var(--warn-edge); }
+  .tag {
+    display: block;
+    font-family: var(--mono);
+    font-size: .7rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-bottom: .4rem;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- 图 ---------- */
+  figure {
+    margin: 1.75rem 0;
+    padding: 1.25rem;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow-x: auto;
+  }
+  figure svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+  figcaption {
+    margin-top: .9rem;
+    font-size: .84rem;
+    color: var(--ink-faint);
+    text-align: center;
+    font-family: var(--mono);
+    letter-spacing: .04em;
+  }
+  .faint { color: var(--ink-faint); }
+  .ax1 { color: var(--ax1); }
+  .ax2 { color: var(--ax2); }
+  .ax3 { color: var(--ax3); }
+  .swatch {
+    display: inline-block;
+    width: .65em; height: .65em;
+    border-radius: 2px;
+    margin-right: .35em;
+    vertical-align: baseline;
+    background: currentColor;
+  }
+
+  /* ---------- 页脚 ---------- */
+  .colophon {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--ink);
+    font-size: .85rem;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 2rem;
+    font-family: var(--mono);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>《线性代数》 鸢尾花书</span>
+      <span>第 1 章 · 向量</span>
+      <span>LA_01_03</span>
+    </div>
+    <h1><span class="num">1.3</span>向量加减法</h1>
+    <p class="standfirst">加法就是「接着再走一段」。一句话说完了，剩下的全是几何直觉和它带来的性质。</p>
+  </header>
+
+  <div class="progress">
+    <span class="plabel">本节进度</span>
+    <span class="chip done">① 向量加法</span>
+    <span class="chip done">② 平行四边形法则</span>
+    <span class="chip done">③ 平行六面体</span>
+    <span class="chip done">④ 三角形法则与交换律</span>
+    <span class="chip done">⑤ 结合律</span>
+    <span class="chip done">⑥ 向量减法</span>
+  </div>
+
+  <!-- ============ 小点 ① ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9312;</span>
+      <h2>向量加法 —— 对应分量相加</h2>
+    </div>
+
+    <p>定义只有一句话：<strong>两个维数相同的向量相加，就是把它们对应位置的分量分别相加</strong>，结果还是同维数的向量。</p>
+
+    <div class="formula">
+      <span class="v">a</span>
+      <span class="op">+</span>
+      <span class="v">b</span>
+      <span class="op">=</span>
+      <span class="mat">
+        <span>a<sub>1</sub></span>
+        <span>a<sub>2</sub></span>
+        <span>&#8942;</span>
+        <span>a<sub>n</sub></span>
+      </span>
+      <span class="op">+</span>
+      <span class="mat">
+        <span>b<sub>1</sub></span>
+        <span>b<sub>2</sub></span>
+        <span>&#8942;</span>
+        <span>b<sub>n</sub></span>
+      </span>
+      <span class="op">=</span>
+      <span class="mat">
+        <span>a<sub>1</sub> + b<sub>1</sub></span>
+        <span>a<sub>2</sub> + b<sub>2</sub></span>
+        <span>&#8942;</span>
+        <span>a<sub>n</sub> + b<sub>n</sub></span>
+      </span>
+    </div>
+
+    <p>注意两件事：</p>
+
+    <ul>
+      <li><strong>维数必须相同。</strong>二维向量加不了三维向量——没有「对应位置」可言。</li>
+      <li><strong>各分量互不干扰。</strong>第 1 个分量只跟第 1 个分量打交道，第 2 个只跟第 2 个。加法是「并排各算各的」，不是把它们搅在一起。</li>
+    </ul>
+
+    <h3>直觉：走两段路</h3>
+
+    <p>把向量读成「走一段路」。<span class="v">a</span> <span class="op">=</span> <span class="sc">[4, 1]</span><sup>T</sup> 是「向右 4、向上 1」，<span class="v">b</span> <span class="op">=</span> <span class="sc">[1, 2]</span><sup>T</sup> 是「向右 1、向上 2」。先走 <span class="v">a</span> 再走 <span class="v">b</span>，一共向右 5、向上 3。</p>
+
+    <div class="formula">
+      <span class="mat">
+        <span>4</span>
+        <span>1</span>
+      </span>
+      <span class="op">+</span>
+      <span class="mat">
+        <span>1</span>
+        <span>2</span>
+      </span>
+      <span class="op">=</span>
+      <span class="mat">
+        <span>5</span>
+        <span>3</span>
+      </span>
+    </div>
+
+    <p>「向右走的账」和「向上走的账」是<strong>分开记的两本账</strong>——这就是分量为什么互不干扰。</p>
+
+    <h3>教材的例子：RGB 混光</h3>
+
+    <p>屏幕上的颜色是三维向量 <span class="sc">[红, 绿, 蓝]</span><sup>T</sup>。三个基本色分别是：</p>
+
+    <figure>
+      <svg viewBox="0 0 620 250" role="img" aria-label="RGB 三原色两两相加得到黄、品红、青">
+        <g font-family="var(--mono)" font-size="13" fill="var(--ink-soft)" text-anchor="middle">
+
+          <g transform="translate(0,0)">
+            <circle cx="60"  cy="46" r="26" fill="#E02020"/>
+            <circle cx="180" cy="46" r="26" fill="#20B050"/>
+            <circle cx="300" cy="46" r="26" fill="#E8D820" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="120" y="52" font-size="20" fill="var(--ink)">+</text>
+            <text x="240" y="52" font-size="20" fill="var(--ink)">=</text>
+            <text x="60"  y="90">[1, 0, 0]</text>
+            <text x="180" y="90">[0, 1, 0]</text>
+            <text x="300" y="90">[1, 1, 0]</text>
+            <text x="60"  y="110" fill="var(--ink-faint)">红 e₁</text>
+            <text x="180" y="110" fill="var(--ink-faint)">绿 e₂</text>
+            <text x="300" y="110" fill="var(--ink-faint)">黄</text>
+          </g>
+
+          <g transform="translate(0,120)">
+            <circle cx="60"  cy="46" r="26" fill="#E02020"/>
+            <circle cx="180" cy="46" r="26" fill="#2050D0"/>
+            <circle cx="300" cy="46" r="26" fill="#D820D8" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="120" y="52" font-size="20" fill="var(--ink)">+</text>
+            <text x="240" y="52" font-size="20" fill="var(--ink)">=</text>
+            <text x="60"  y="90">[1, 0, 0]</text>
+            <text x="180" y="90">[0, 0, 1]</text>
+            <text x="300" y="90">[1, 0, 1]</text>
+            <text x="60"  y="110" fill="var(--ink-faint)">红 e₁</text>
+            <text x="180" y="110" fill="var(--ink-faint)">蓝 e₃</text>
+            <text x="300" y="110" fill="var(--ink-faint)">品红</text>
+          </g>
+
+          <g transform="translate(320,0)">
+            <circle cx="60"  cy="46" r="26" fill="#20B050"/>
+            <circle cx="180" cy="46" r="26" fill="#2050D0"/>
+            <circle cx="300" cy="46" r="26" fill="#20D8D8" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="120" y="52" font-size="20" fill="var(--ink)">+</text>
+            <text x="240" y="52" font-size="20" fill="var(--ink)">=</text>
+            <text x="60"  y="90">[0, 1, 0]</text>
+            <text x="180" y="90">[0, 0, 1]</text>
+            <text x="300" y="90">[0, 1, 1]</text>
+            <text x="60"  y="110" fill="var(--ink-faint)">绿 e₂</text>
+            <text x="180" y="110" fill="var(--ink-faint)">蓝 e₃</text>
+            <text x="300" y="110" fill="var(--ink-faint)">青</text>
+          </g>
+
+          <g transform="translate(320,120)">
+            <circle cx="45"  cy="46" r="22" fill="#E02020"/>
+            <circle cx="130" cy="46" r="22" fill="#20B050"/>
+            <circle cx="215" cy="46" r="22" fill="#2050D0"/>
+            <circle cx="300" cy="46" r="26" fill="#FFFFFF" stroke="var(--ink-faint)" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <text x="87"  y="52" font-size="18" fill="var(--ink)">+</text>
+            <text x="172" y="52" font-size="18" fill="var(--ink)">+</text>
+            <text x="257" y="52" font-size="18" fill="var(--ink)">=</text>
+            <text x="300" y="90">[1, 1, 1]</text>
+            <text x="300" y="110" fill="var(--ink-faint)">白</text>
+          </g>
+
+        </g>
+      </svg>
+      <figcaption>图 1 · RGB 三原色相加：光越加越亮，全开就是白</figcaption>
+    </figure>
+
+    <p>三个分量各管各的通道，互不串门——<strong>「加法各分量独立」这件抽象的事，在这里就是「三盏灯各调各的亮度」</strong>。全关是黑 <span class="sc">[0, 0, 0]</span><sup>T</sup>，也就是<strong>零向量</strong>。</p>
+
+    <h3>NumPy 怎么写</h3>
+
+    <p>一个加号，没了。</p>
+
+    <pre><code>import numpy as np
+
+a_vec = np.array([4, 1])
+b_vec = np.array([1, 2])
+
+a_plus_b = a_vec + b_vec</code></pre>
+
+    <pre class="out"><code>a       = [4 1]
+b       = [1 2]
+a + b   = [5 3]    &lt;- [4+1, 1+2]</code></pre>
+
+    <p>NumPy 看见两个数组相加，会<strong>自动逐个分量配对</strong>，不需要你写循环。这个特性叫<strong>向量化</strong>（vectorization），上一节 <code>xx1**2 + xx2**2</code> 用的就是它。</p>
+
+    <div class="warn">
+      <span class="tag">坑：list 的 + 不是加法</span>
+      <p>Python 原生列表的 <code>+</code> 是<strong>拼接</strong>，不是数学加法：</p>
+      <pre class="out"><code>[4, 1] + [1, 2]   ->  [4, 1, 1, 2]     # 接成 4 个数
+np.array([4,1]) + np.array([1,2])  ->  [5 3]   # 这才是加法</code></pre>
+      <p>不报错，但结果全错——所以<strong>做数学之前，一定先 <code>np.array()</code> 转成数组</strong>。</p>
+    </div>
+
+    <div class="warn">
+      <span class="tag">维数不同会报错</span>
+      <pre class="out"><code>np.array([1,2]) + np.array([1,2,3])
+ValueError: operands could not be broadcast together
+            with shapes (2,) (3,)</code></pre>
+      <p>看到 <code>shapes (2,) (3,)</code> 就知道是<strong>两个数组长度对不上</strong>。<code>broadcast</code>（广播）这个词后面会正式讲，现在只要认得这个报错长什么样。</p>
+    </div>
+  </section>
+
+  <!-- ============ 小点 ② ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9313;</span>
+      <h2>几何视角:平行四边形法则</h2>
+    </div>
+
+    <p><strong>平行四边形法则</strong>(parallelogram law):把 <span class="v">a</span>、<span class="v">b</span> 的起点对齐在原点，以它们为邻边构造一个平行四边形；从原点出发的那条<strong>对角线</strong>，就是 <span class="v">a</span> <span class="op">+</span> <span class="v">b</span>。</p>
+
+    <p>拿上一小点的例子 <span class="v">a</span> <span class="op">=</span> <span class="sc">[4, 1]</span><sup>T</sup>、<span class="v">b</span> <span class="op">=</span> <span class="sc">[1, 2]</span><sup>T</sup> 来画：</p>
+
+    <figure>
+      <svg viewBox="0 0 380 320" role="img" aria-label="平行四边形法则：向量 a=(4,1)、b=(1,2) 相加得到 a+b=(5,3)，虚线补出平行四边形">
+        <defs>
+          <marker id="pgA" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax1)"/>
+          </marker>
+          <marker id="pgB" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax2)"/>
+          </marker>
+          <marker id="pgC" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="pgAx" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink-faint)"/>
+          </marker>
+        </defs>
+
+        <g stroke="var(--grid)" stroke-width="1">
+          <line x1="105" y1="30" x2="105" y2="280"/>
+          <line x1="160" y1="30" x2="160" y2="280"/>
+          <line x1="215" y1="30" x2="215" y2="280"/>
+          <line x1="270" y1="30" x2="270" y2="280"/>
+          <line x1="325" y1="30" x2="325" y2="280"/>
+          <line x1="30" y1="225" x2="360" y2="225"/>
+          <line x1="30" y1="170" x2="360" y2="170"/>
+          <line x1="30" y1="115" x2="360" y2="115"/>
+        </g>
+
+        <line x1="30" y1="280" x2="355" y2="280" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#pgAx)"/>
+        <line x1="50" y1="300" x2="50" y2="40" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#pgAx)"/>
+
+        <g stroke-dasharray="4 4" stroke="var(--ink-soft)" stroke-width="1.5">
+          <line x1="105" y1="170" x2="325" y2="115"/>
+          <line x1="270" y1="225" x2="325" y2="115"/>
+        </g>
+
+        <line x1="50" y1="280" x2="266" y2="227" stroke="var(--ax1)" stroke-width="3" marker-end="url(#pgA)"/>
+        <line x1="50" y1="280" x2="101" y2="173" stroke="var(--ax2)" stroke-width="3" marker-end="url(#pgB)"/>
+        <line x1="50" y1="280" x2="320" y2="118" stroke="var(--accent)" stroke-width="3" marker-end="url(#pgC)"/>
+
+        <circle cx="50" cy="280" r="4" fill="var(--ink)"/>
+
+        <g font-family="var(--math)" font-style="italic" font-size="16">
+          <text x="150" y="264" fill="var(--ax1)" font-weight="700">a</text>
+          <text x="62"  y="210" fill="var(--ax2)" font-weight="700">b</text>
+          <text x="150" y="150" fill="var(--accent)" font-weight="700">a + b</text>
+          <text x="38"  y="298" fill="var(--ink-faint)" font-size="13">0</text>
+        </g>
+        <g font-family="var(--mono)" font-size="11" fill="var(--ink-faint)" text-anchor="middle">
+          <text x="105" y="296">1</text><text x="160" y="296">2</text>
+          <text x="215" y="296">3</text><text x="270" y="296">4</text>
+          <text x="325" y="296">5</text>
+          <text x="34" y="229">1</text><text x="34" y="174">2</text><text x="34" y="119">3</text>
+        </g>
+      </svg>
+      <figcaption>图 2 · 平行四边形法则:a+b 是从原点出发的对角线</figcaption>
+    </figure>
+
+    <p>两条虚线分别<strong>平行于 a、平行于 b</strong>，把图形补成一个四边形。四条边两两平行——这正是「平行四边形」名字的来源。对角线从原点指向的那个角，坐标恰好是 <span class="sc">[5, 3]</span><sup>T</sup>，和逐分量相加的结果完全一致。也就是说：<strong>代数上的「分量相加」和几何上的「构造对角线」，是同一件事的两种说法。</strong></p>
+
+    <div class="warn">
+      <span class="tag">特例:a、b 共线时,平行四边形「塌」了</span>
+      <p>如果 <span class="v">a</span>、<span class="v">b</span> 方向相同或相反（<strong>共线</strong>，collinear），就找不到第二个方向来撑开平行四边形——<span class="v">a</span> <span class="op">+</span> <span class="v">b</span> 仍然落在同一条直线上。零向量 <span class="v">0</span> 也算共线的极端情况（长度为 0，没有方向）。教材图 4 画了这两种子情况，可以翻 PDF 第 4 页对照看。</p>
+    </div>
+
+    <h3>零向量:加法的「不动点」</h3>
+
+    <p>零向量 <span class="v">0</span> <span class="op">=</span> <span class="sc">[0, 0, &hellip;, 0]</span><sup>T</sup> 有个特殊身份——<strong>加法单位元</strong>（additive identity）：</p>
+
+    <div class="formula">
+      <span class="v">a</span>
+      <span class="op">+</span>
+      <span class="v">0</span>
+      <span class="op">=</span>
+      <span class="v">a</span>
+    </div>
+
+    <p>任何向量加上零向量，都<strong>原地不动</strong>。RGB 类比：零向量对应黑色（没有任何光），黑色和任何颜色混合，那个颜色都不会变。</p>
+
+    <pre><code>zero = np.array([0, 0])
+a_vec + zero</code></pre>
+    <pre class="out"><code>a + 0 = [4 1]   &lt;- 加零向量,自己不变</code></pre>
+
+    <h3>代码:<code>plt.quiver()</code> 画向量</h3>
+
+    <p>图 2 是用 <code>练习/LA_01_03_代码.py</code> 的<code>小点2_平行四边形法则()</code> 画的，核心是 <code>plt.quiver(起点x, 起点y, 分量x, 分量y, ...)</code>：</p>
+
+    <pre><code>plt.quiver(0, 0, a_vec[0], a_vec[1],
+           angles='xy', scale_units='xy', scale=1,
+           color='r', label="a")</code></pre>
+
+    <p><code>angles='xy'</code> <span class="op">+</span> <code>scale_units='xy'</code> <span class="op">+</span> <code>scale=1</code> 这三兄弟必须一起出现——意思是「箭头按坐标轴的实际单位画，不做任何缩放」。少了它们，<code>quiver</code> 默认会按图窗大小自动缩放箭头，长度就不准了。</p>
+
+    <div class="warn">
+      <span class="tag">顺手挑个教材的错</span>
+      <p>教材原版 <code>LA_01_03_02.ipynb</code> 画向量 <span class="v">b</span> 那一行，<code>label="a"</code> 写错了（应该是 <code>label="b"</code>），导致图例里两条线都显示成 <span class="sc">a</span>。<code>练习/LA_01_03_代码.py</code> 里已经订正。<strong>这提醒我们:参考答案也会有笔误，读代码要自己核对，不要照单全收。</strong></p>
+    </div>
+  </section>
+
+  <!-- ============ 小点 ③ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9314;</span>
+      <h2>平行六面体 —— 三个向量相加</h2>
+    </div>
+
+    <p>平行四边形法则管的是<strong>两个</strong>向量。三个向量 <span class="v">a</span>、<span class="v">b</span>、<span class="v">c</span> 相加，几何上对应一个<strong>平行六面体</strong>（parallelepiped）——六个面都是平行四边形的立体图形。</p>
+
+    <p>做法其实就是<strong>把平行四边形法则用两次</strong>：先用 <span class="v">a</span>、<span class="v">b</span> 构造一个平行四边形，对角线是 <span class="v">a</span><span class="op">+</span><span class="v">b</span>；再把这条对角线当成新的一条边，和 <span class="v">c</span> 构造第二个平行四边形，第二条对角线就是 <span class="v">a</span><span class="op">+</span><span class="v">b</span><span class="op">+</span><span class="v">c</span>。整个六面体的<strong>主对角线</strong>，就是三个向量之和。</p>
+
+    <p>最干净的例子还是 RGB：红 <span class="sc">e</span><sub class="sc">1</sub>、绿 <span class="sc">e</span><sub class="sc">2</sub>、蓝 <span class="sc">e</span><sub class="sc">3</sub> 三条邻边，撑出一个<strong>单位正方体</strong>，主对角线正是三色光叠加的结果——白色 <span class="sc">[1,1,1]</span><sup>T</sup>。</p>
+
+    <figure>
+      <svg viewBox="0 0 320 300" role="img" aria-label="平行六面体：红绿蓝三个单位向量 e1 e2 e3 撑出单位立方体，主对角线是三者之和">
+        <defs>
+          <marker id="cbA" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax1)"/>
+          </marker>
+          <marker id="cbB" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax2)"/>
+          </marker>
+          <marker id="cbC" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="cbD" markerWidth="10" markerHeight="10" refX="8.5" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--ink)"/>
+          </marker>
+        </defs>
+
+        <polygon points="150,220 90,260 180,260 240,220" fill="var(--grid)" opacity="0.6"/>
+
+        <g stroke="var(--ink-soft)" stroke-width="1.3" stroke-dasharray="4 4" fill="none">
+          <line x1="90"  y1="260" x2="180" y2="260"/>
+          <line x1="90"  y1="260" x2="90"  y2="150"/>
+          <line x1="240" y1="220" x2="180" y2="260"/>
+          <line x1="240" y1="220" x2="240" y2="110"/>
+          <line x1="150" y1="110" x2="90"  y2="150"/>
+          <line x1="150" y1="110" x2="240" y2="110"/>
+          <line x1="180" y1="260" x2="180" y2="150"/>
+          <line x1="90"  y1="150" x2="180" y2="150"/>
+          <line x1="240" y1="110" x2="180" y2="150"/>
+        </g>
+
+        <line x1="150" y1="220" x2="97"  y2="255" stroke="var(--ax1)" stroke-width="3" marker-end="url(#cbA)"/>
+        <line x1="150" y1="220" x2="233" y2="220" stroke="var(--ax2)" stroke-width="3" marker-end="url(#cbB)"/>
+        <line x1="150" y1="220" x2="150" y2="117" stroke="var(--accent)" stroke-width="3" marker-end="url(#cbC)"/>
+        <line x1="150" y1="220" x2="176" y2="155" stroke="var(--ink)" stroke-width="3" marker-end="url(#cbD)"/>
+
+        <circle cx="150" cy="220" r="4" fill="var(--ink)"/>
+
+        <g font-family="var(--math)" font-style="italic" font-size="15">
+          <text x="105" y="252" fill="var(--ax1)" font-weight="700">e&#8321;</text>
+          <text x="196" y="216" fill="var(--ax2)" font-weight="700">e&#8322;</text>
+          <text x="156" y="130" fill="var(--accent)" font-weight="700">e&#8323;</text>
+          <text x="184" y="146" fill="var(--ink)" font-weight="700" font-size="12">e&#8321;+e&#8322;+e&#8323;</text>
+          <text x="138" y="238" fill="var(--ink-faint)" font-size="13">0</text>
+        </g>
+      </svg>
+      <figcaption>图 3 · 平行六面体(单位立方体):e&#8321;+e&#8322;+e&#8323; 是主对角线,即白色</figcaption>
+    </figure>
+
+    <p>浅灰色那个面，是 <span class="sc">e</span><sub class="sc">1</sub>、<span class="sc">e</span><sub class="sc">2</sub> 撑出的平行四边形（第一次用平行四边形法则）；再把 <span class="sc">e</span><sub class="sc">3</sub> 加上去，主对角线捅穿整个立方体（第二次用平行四边形法则）。<strong>三个向量的加法，本质上就是两次两个向量的加法。</strong></p>
+
+    <div class="warn">
+      <span class="tag">特例:三个向量共面时,「六面体」塌成平面</span>
+      <p>如果 <span class="v">a</span>、<span class="v">b</span>、<span class="v">c</span> 恰好在同一个平面上（<strong>共面</strong>，coplanar），撑不起第三个维度，六面体退化成一个平行四边形。更特别的情况——如果三个向量首尾相接正好围成一个封闭三角形，那么它们的和是<strong>零向量</strong> <span class="v">0</span>：从起点出发按顺序走一圈，正好走回起点。这正是下一小点「三角形法则」的引子。</p>
+    </div>
+
+    <div class="note">
+      <span class="tag">代码留作练习</span>
+      <p>教材配套的 <code>LA_01_03_01/02/03.ipynb</code> 都是 2D 的，3D 版本（画出图 3 这样的立方体）本身就是教材的练习题 Q5，我们放到本节练习里再一起动手，这里先把几何直觉立住。</p>
+    </div>
+  </section>
+
+  <!-- ============ 小点 ④ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9315;</span>
+      <h2>几何视角:三角形法则与交换律</h2>
+    </div>
+
+    <p><strong>三角形法则</strong>(triangle law):把 <span class="v">b</span> 的起点挪到 <span class="v">a</span> 的终点(首尾相接)，从 <span class="v">a</span> 的起点指向 <span class="v">b</span> 的终点的那条有向线段，就是 <span class="v">a</span> <span class="op">+</span> <span class="v">b</span>。</p>
+
+    <p>这跟小点①「走两段路」的直觉完全对应：<strong>先走 a，再接着走 b，最终位置就是 a+b</strong>。比起平行四边形法则，它<strong>不用补虚线</strong>——三条边直接就是一个三角形。事实上，平行四边形的对角线本来就能把平行四边形切成两个全等三角形，三角形法则用的正是其中一半。</p>
+
+    <figure>
+      <svg viewBox="0 0 380 320" role="img" aria-label="三角形法则:先走 a 再走 b(实线),或先走 b 再走 a(虚线),两条路径终点相同,都是 a+b">
+        <defs>
+          <marker id="triR" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax1)"/>
+          </marker>
+          <marker id="triG" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax2)"/>
+          </marker>
+          <marker id="triAx" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink-faint)"/>
+          </marker>
+        </defs>
+
+        <g stroke="var(--grid)" stroke-width="1">
+          <line x1="105" y1="30" x2="105" y2="280"/>
+          <line x1="160" y1="30" x2="160" y2="280"/>
+          <line x1="215" y1="30" x2="215" y2="280"/>
+          <line x1="270" y1="30" x2="270" y2="280"/>
+          <line x1="325" y1="30" x2="325" y2="280"/>
+          <line x1="30" y1="225" x2="360" y2="225"/>
+          <line x1="30" y1="170" x2="360" y2="170"/>
+          <line x1="30" y1="115" x2="360" y2="115"/>
+        </g>
+
+        <line x1="30" y1="280" x2="355" y2="280" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#triAx)"/>
+        <line x1="50" y1="300" x2="50" y2="40" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#triAx)"/>
+
+        <!-- 实线路径: 先 a 后 b -->
+        <line x1="50" y1="280" x2="266" y2="227" stroke="var(--ax1)" stroke-width="3" marker-end="url(#triR)"/>
+        <line x1="270" y1="225" x2="321" y2="118" stroke="var(--ax2)" stroke-width="3" marker-end="url(#triG)"/>
+
+        <!-- 虚线路径: 先 b 后 a -->
+        <line x1="50" y1="280" x2="101" y2="173" stroke="var(--ax2)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#triG)"/>
+        <line x1="105" y1="170" x2="321" y2="118" stroke="var(--ax1)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#triR)"/>
+
+        <circle cx="325" cy="115" r="5" fill="var(--accent)"/>
+        <circle cx="50" cy="280" r="4" fill="var(--ink)"/>
+
+        <g font-family="var(--math)" font-style="italic" font-size="16">
+          <text x="140" y="270" fill="var(--ax1)" font-weight="700">a</text>
+          <text x="305" y="165" fill="var(--ax2)" font-weight="700">b</text>
+          <text x="185" y="95" fill="var(--accent)" font-weight="700" font-size="14">a+b = b+a</text>
+          <text x="38"  y="298" fill="var(--ink-faint)" font-size="13">0</text>
+        </g>
+        <g font-family="var(--mono)" font-size="11" fill="var(--ink-faint)">
+          <text x="60" y="222">先 b 再 a(虚线路径)</text>
+        </g>
+      </svg>
+      <figcaption>图 4 · 三角形法则:两种先后顺序,终点都是同一个 a+b</figcaption>
+    </figure>
+
+    <p>实线路径是「先走 a(红)、再走 b(绿)」；虚线路径是「先走 b、再走 a」。<strong>两条路径终点重合</strong>——这就是<strong>向量加法交换律</strong>:</p>
+
+    <div class="formula">
+      <span class="v">a</span>
+      <span class="op">+</span>
+      <span class="v">b</span>
+      <span class="op">=</span>
+      <span class="v">b</span>
+      <span class="op">+</span>
+      <span class="v">a</span>
+    </div>
+
+    <p>直觉上不难理解：走两段路，先往东走还是先往北走，只要两段都走了，<strong>最终到达的位置是一样的</strong>。</p>
+
+    <div class="warn">
+      <span class="tag">还是那句话:共线就围不成三角形</span>
+      <p>和平行四边形法则一样，如果 <span class="v">a</span>、<span class="v">b</span> 共线，三条边会重叠在同一条直线上，围不出真正的三角形——但 <span class="v">a</span><span class="op">+</span><span class="v">b</span> 这个「终点」依然存在，只是三点共线退化成了一条线段。</p>
+    </div>
+
+    <h3>代码:<code>quiver</code> 的起点从原点挪开</h3>
+
+    <p>对照 <code>练习/LA_01_03_代码.py</code> 里的 <code>小点4_三角形法则()</code>，和小点②的代码相比，唯一的区别就是画 <span class="v">b</span> 那一行：</p>
+
+    <pre><code># 平行四边形法则(小点②): b 也从原点出发
+plt.quiver(0, 0, b_vec[0], b_vec[1], ...)
+
+# 三角形法则(小点④): b 的起点挪到 a 的终点
+plt.quiver(a_vec[0], a_vec[1], b_vec[0], b_vec[1], ...)</code></pre>
+
+    <p><code>plt.quiver(x, y, u, v, ...)</code> 的前两个参数 <code>(x, y)</code> 永远是<strong>箭头起点</strong>，不一定非得是原点。把起点从 <code>(0, 0)</code> 换成 <code>(a_vec[0], a_vec[1])</code>，画出来的箭头就是「从 a 的终点出发」——这一个改动，就把平行四边形法则变成了三角形法则。</p>
+
+    <p>教材原版 <code>LA_01_03_03.ipynb</code> 用的正是这个写法。跑一下代码，会弹出两个图窗，分别对应图 4 里的实线路径和虚线路径:</p>
+
+    <pre><code>python 练习/LA_01_03_代码.py</code></pre>
+  </section>
+
+  <!-- ============ 小点 ⑤ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9316;</span>
+      <h2>多向量首尾相连与结合律</h2>
+    </div>
+
+    <p>三角形法则不止能加两个向量。把它<strong>重复使用</strong>:<span class="v">a</span> 的终点接 <span class="v">b</span> 的起点，<span class="v">b</span> 的终点接 <span class="v">c</span> 的起点……依次首尾相连，<strong>从最初起点指向最终终点的箭头，就是全部向量之和</strong>。</p>
+
+    <figure>
+      <svg viewBox="0 0 320 340" role="img" aria-label="三个向量 a、b、c 依次首尾相连,从起点到终点的箭头就是 a+b+c">
+        <defs>
+          <marker id="chA" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax1)"/>
+          </marker>
+          <marker id="chB" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax2)"/>
+          </marker>
+          <marker id="chC" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="chAx" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink-faint)"/>
+          </marker>
+        </defs>
+
+        <line x1="20" y1="300" x2="300" y2="300" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#chAx)"/>
+        <line x1="50" y1="320" x2="50" y2="20" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#chAx)"/>
+
+        <line x1="50" y1="300" x2="181" y2="257" stroke="var(--ax1)" stroke-width="3" marker-end="url(#chA)"/>
+        <line x1="185" y1="255" x2="226" y2="167" stroke="var(--ax2)" stroke-width="3" marker-end="url(#chB)"/>
+        <line x1="230" y1="165" x2="189" y2="78" stroke="var(--accent)" stroke-width="3" marker-end="url(#chC)"/>
+
+        <circle cx="50" cy="300" r="4" fill="var(--ink)"/>
+        <circle cx="185" cy="255" r="3" fill="var(--ink-faint)"/>
+        <circle cx="230" cy="165" r="3" fill="var(--ink-faint)"/>
+        <circle cx="185" cy="75" r="5" fill="var(--ink)"/>
+
+        <g font-family="var(--math)" font-style="italic" font-size="16">
+          <text x="82"  y="272" fill="var(--ax1)" font-weight="700">a</text>
+          <text x="234" y="220" fill="var(--ax2)" font-weight="700">b</text>
+          <text x="140" y="115" fill="var(--accent)" font-weight="700">c</text>
+          <text x="95"  y="55"  fill="var(--ink)" font-weight="700" font-size="14">a+b+c</text>
+          <text x="36"  y="318" fill="var(--ink-faint)" font-size="13">0</text>
+        </g>
+      </svg>
+      <figcaption>图 5 · 三个向量首尾相连:a &#8594; b &#8594; c,起点到终点就是 a+b+c</figcaption>
+    </figure>
+
+    <p>这跟小点③的平行六面体是<strong>同一件事的两种画法</strong>:平行六面体是「两次平行四边形法则」，这里是「三次三角形法则」——殊途同归，终点都是 <span class="v">a</span><span class="op">+</span><span class="v">b</span><span class="op">+</span><span class="v">c</span>。RGB 版本可以翻 PDF 第 12 页图 13:红、绿、蓝依次首尾相连，终点正是白色。</p>
+
+    <h3>结合律:先加哪两个,结果都一样</h3>
+
+    <p>三个以上向量相加，<strong>先算哪两个</strong>都不影响最终结果:</p>
+
+    <div class="formula">
+      <span class="op">(</span><span class="v">a</span><span class="op">+</span><span class="v">b</span><span class="op">)</span>
+      <span class="op">+</span><span class="v">c</span>
+      <span class="op">=</span>
+      <span class="v">a</span><span class="op">+</span>
+      <span class="op">(</span><span class="v">b</span><span class="op">+</span><span class="v">c</span><span class="op">)</span>
+    </div>
+
+    <p>这就是<strong>向量加法结合律</strong>(associative law)。PDF 第 12&ndash;14 页图 14、图 15 画了好几条不同分组路径，都指向同一个白色向量，可以对照着翻一翻。</p>
+
+    <div class="note">
+      <span class="tag">为什么结合律"理所当然"成立</span>
+      <p>小点①讲过:向量加法就是<strong>分量各自相加</strong>。而普通实数的加法早就满足结合律 —— <span class="sc">(3+1)+5 = 3+(1+5)</span>，小学就学过。向量不过是把这件事在<strong>每个分量上各做一遍</strong>：分量满足的结合律，向量自然继承。<strong>这也是这门课一个常见的套路:向量的性质，往往可以拆回"每个分量都是普通实数"去理解。</strong></p>
+    </div>
+
+    <h3>交换律 + 结合律:a+b+c 不用纠结括号</h3>
+
+    <p>把小点④的交换律和这里的结合律放在一起:<strong>不管加的顺序、不管先加哪两个，结果永远一样。</strong>这就是为什么可以放心写 <span class="sc">a+b+c</span>、<span class="sc">a+b+c+d</span>……而不用给每次加法都标括号——反正标在哪儿结果都相同。</p>
+
+    <pre><code>a = np.array([3, 1])
+b = np.array([1, 2])
+c = np.array([-1, 2])
+
+(a + b) + c   # [3 5]
+a + (b + c)   # [3 5]  <- 一样
+(a + c) + b   # [3 5]  <- 还是一样</code></pre>
+
+    <pre class="out"><code>(3 + 1) + 5 = 9    3 + (1 + 5) = 9   &lt;- 分量层面就是这么回事</code></pre>
+  </section>
+
+  <!-- ============ 小点 ⑥ ============ -->
+  <section class="point">
+    <div class="point-head">
+      <span class="point-num">&#9317;</span>
+      <h2>向量减法</h2>
+    </div>
+
+    <p>减法和加法是同一套路数:<strong>对应分量相减</strong>。</p>
+
+    <div class="formula">
+      <span class="v">a</span> <span class="op">&minus;</span> <span class="v">b</span>
+      <span class="op">=</span>
+      <span class="mat">
+        <span>a<sub>1</sub> &minus; b<sub>1</sub></span>
+        <span>a<sub>2</sub> &minus; b<sub>2</sub></span>
+        <span>&#8942;</span>
+        <span>a<sub>n</sub> &minus; b<sub>n</sub></span>
+      </span>
+    </div>
+
+    <p>RGB 类比:减去一个颜色向量，相当于<strong>过滤掉这个颜色</strong>。黄减红剩绿——黄色本来就是红光加绿光，拿走红光，自然只剩绿光:</p>
+
+    <pre class="out"><code>黄 [1 1 0]  - 红 [1 0 0]  =  [0 1 0]  绿</code></pre>
+
+    <h3>减法 = 加上"相反向量"</h3>
+
+    <p>减法可以完全用加法改写:</p>
+
+    <div class="formula">
+      <span class="v">a</span> <span class="op">&minus;</span> <span class="v">b</span>
+      <span class="op">=</span>
+      <span class="v">a</span> <span class="op">+</span> <span class="op">(</span><span class="op">&minus;</span><span class="v">b</span><span class="op">)</span>
+    </div>
+
+    <p><span class="op">&minus;</span><span class="v">b</span> 叫 <span class="v">b</span> 的<strong>相反向量</strong>(opposite vector)：长度和 <span class="v">b</span> 一样，方向正好相反。它是向量加法的<strong>逆元</strong>——正好和小点②的零向量 <span class="v">0</span> 对应上:<span class="v">0</span> 是加法的<strong>单位元</strong>(<span class="sc">a+0=a</span>，加了等于没加)，<span class="op">&minus;</span><span class="v">b</span> 是加法的<strong>逆元</strong>(<span class="sc">b+(&minus;b)=0</span>，加了正好抵消)。有了「加法 + 单位元 + 逆元」这三件套，减法就不用单独定义一套新规则，直接套用加法的所有性质。</p>
+
+    <h3>关键几何直觉:a&minus;b 是"从 b 指向 a"的箭头</h3>
+
+    <p>这是本节最值钱的一条直觉，以后全书都会用到。设 <span class="v">c</span> <span class="op">=</span> <span class="v">a</span> <span class="op">&minus;</span> <span class="v">b</span>，两边加上 <span class="v">b</span>:</p>
+
+    <div class="formula">
+      <span class="v">b</span> <span class="op">+</span> <span class="v">c</span> <span class="op">=</span> <span class="v">a</span>
+    </div>
+
+    <p>按三角形法则读这个等式:<strong>从 b 的终点出发，走一段 c，恰好到达 a 的终点</strong>。也就是说——如果 <span class="v">a</span>、<span class="v">b</span> 都是从原点出发的箭头(各自代表一个"点")，那么 <span class="v">a</span><span class="op">&minus;</span><span class="v">b</span> 就是<strong>从 b 指向 a 的那支箭头</strong>。</p>
+
+    <figure>
+      <svg viewBox="0 0 340 320" role="img" aria-label="a=(4,1)、b=(1,3)都从原点出发,a-b 就是从 b 的终点指向 a 的终点的箭头">
+        <defs>
+          <marker id="subA" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax1)"/>
+          </marker>
+          <marker id="subB" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ax2)"/>
+          </marker>
+          <marker id="subD" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)"/>
+          </marker>
+          <marker id="subAx" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink-faint)"/>
+          </marker>
+        </defs>
+
+        <line x1="20" y1="280" x2="320" y2="280" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#subAx)"/>
+        <line x1="50" y1="300" x2="50" y2="20" stroke="var(--ink-faint)" stroke-width="1.5" marker-end="url(#subAx)"/>
+
+        <line x1="50" y1="280" x2="266" y2="227" stroke="var(--ax1)" stroke-width="3" marker-end="url(#subA)"/>
+        <line x1="50" y1="280" x2="101" y2="122" stroke="var(--ax2)" stroke-width="3" marker-end="url(#subB)"/>
+        <line x1="105" y1="115" x2="263" y2="222" stroke="var(--accent)" stroke-width="3.5" marker-end="url(#subD)"/>
+
+        <circle cx="50" cy="280" r="4" fill="var(--ink)"/>
+
+        <g font-family="var(--math)" font-style="italic" font-size="16">
+          <text x="150" y="266" fill="var(--ax1)" font-weight="700">a</text>
+          <text x="58"  y="190" fill="var(--ax2)" font-weight="700">b</text>
+          <text x="150" y="150" fill="var(--accent)" font-weight="700">a&minus;b</text>
+          <text x="36"  y="298" fill="var(--ink-faint)" font-size="13">0</text>
+        </g>
+      </svg>
+      <figcaption>图 6 · a&minus;b:从 b 的终点(1,3)指向 a 的终点(4,1)</figcaption>
+    </figure>
+
+    <p>这条直觉在后面几乎每一章都会用到:<strong>两点之差 = 从一点指向另一点的箭头。</strong>比如以后讲"数据点之间的距离"，第一步永远是先做减法，把两个点的坐标差变成一个方向明确的向量。</p>
+
+    <pre><code>a = np.array([4, 1])
+b = np.array([1, 3])
+
+a - b          # [ 3 -2]
+a + (-b)       # [ 3 -2]   和上面相等
+b - a          # [-3  2]   正好是 a-b 的相反数</code></pre>
+
+    <div class="note">
+      <span class="tag">对照 PDF</span>
+      <p>教材图 17 用平行四边形法则画 <span class="sc">a+(&minus;b)</span>，图 18 用三角形法则画"从 b 指向 a"，两种画法殊途同归。可以翻 PDF 第 14&ndash;15 页对照看几个子情形。</p>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span>《线性代数》 鸢尾花书 · 姜伟生</span>
+    <span>讲义 LA_01_03</span>
+    <span>小点 ①&ndash;⑥ · 全节完</span>
+  </footer>
+
+</div>
